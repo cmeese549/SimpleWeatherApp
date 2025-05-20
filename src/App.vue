@@ -28,6 +28,7 @@ const togglePinned = (cityName: string) => {
             ...city,
             id: cityId++
         }))
+        activeCityId.value = -1
     } else {
         currentCities.push({
             id: cityId++,
@@ -36,13 +37,13 @@ const togglePinned = (cityName: string) => {
         pinnedCities.value = currentCities
         activeCityId.value = cityId
         activeCityName.value = cityName
+        const newCityIndex = pinnedCities.value.findIndex(city => city.name === cityName)
+        updateActiveCity(pinnedCities.value[newCityIndex].id)
     }
     saveLocalData({
         pinnedCities: pinnedCities.value.map(city => city.name),
         metric: measurementUnits.value
     })
-    const newCityIndex = pinnedCities.value.findIndex(city => city.name === cityName)
-    updateActiveCity(pinnedCities.value[newCityIndex].id)
 }
 
 const updateActiveCity = (cityId: number) => {
@@ -87,7 +88,11 @@ onMounted(async () => {
             </div>
         </div>
         <div v-else class="flex-grow">
-            <Search @citySelected="(cityName) => { activeCityName = cityName; searching = false }" />
+            <Search @citySelected="(cityName) => { 
+                activeCityName = cityName; 
+                activeCityId = -1
+                searching = false;
+            }" />
         </div>
         <Footer :lastUpdated="lastUpdated" :measurementUnits="measurementUnits" @unitChange="updateMeasurementUnits" />
     </div>
