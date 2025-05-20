@@ -85,7 +85,7 @@ const dailyForecast = computed(() => {
         .slice(0, 5)
 })
 
-function formatDate(date: Date): string {
+const formatDate = (date: Date): string => {
     const localDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000)
     return localDate.toLocaleDateString('en-US', { 
         weekday: 'long',

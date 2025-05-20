@@ -1,4 +1,5 @@
 import * as Papa from 'papaparse'
+import type { PinnedCity } from './components/PinnedCities.vue'
 
 interface CityLocationResponse {
     city_id: number
@@ -38,6 +39,20 @@ export interface WeatherData {
     forecast: HourlyForecastData[]
 }
 
+export interface LocalData {
+    pinnedCities: string[]
+    metric: string
+}
+
+const defaultLocalData: LocalData = {
+    pinnedCities: [
+        'Rio De Janeiro',
+        'Beijing',
+        'Los Angeles'
+    ],
+    metric: 'metric'
+}
+
 const response = await fetch('/cities_20000.csv')
 const fileContent = await response.text()
 const { data } = Papa.parse(fileContent, {
@@ -45,7 +60,7 @@ const { data } = Papa.parse(fileContent, {
     skipEmptyLines: true
 }) as { data: CityLocationResponse[] }
 
-export async function getCityLocation(cityName: string): Promise<CityLocation | { error: string }> {
+export const getCityLocation = async (cityName: string): Promise<CityLocation | { error: string }> => {
     try {
         const city = data.find(record => 
             record.city_name.toLowerCase() === cityName.toLowerCase()
@@ -69,7 +84,7 @@ export async function getCityLocation(cityName: string): Promise<CityLocation | 
     }
 }
 
-export async function searchCities(query: string): Promise<string[]> {
+export const searchCities = async (query: string): Promise<string[]>  => {
     try {
         const normalizedQuery = query.trim().toLowerCase();
 
@@ -89,7 +104,7 @@ export async function searchCities(query: string): Promise<string[]> {
     }
 }
 
-export async function getWeatherData(cityLocation: CityLocation, units: string): Promise<WeatherData | { error: string }> {
+export const getWeatherData = async (cityLocation: CityLocation, units: string): Promise<WeatherData | { error: string }> => {
     try {
         const currentWeatherData = await fetch(`https://api.openweathermap.org/data/2.5/weather?units=${units}&lat=${cityLocation.lat}&lon=${cityLocation.lon}&appid=${import.meta.env.VITE_OPENWEATHER_API_KEY}`)
         let data = await currentWeatherData.json()
@@ -123,3 +138,19 @@ export async function getWeatherData(cityLocation: CityLocation, units: string):
     }
 }
 
+export const loadLocalData = async (): Promise<LocalData> => {
+    try {
+        const raw = localStorage.getItem('localWeatherData')
+        return raw ? JSON.parse(raw) : defaultLocalData
+      } catch {
+        return defaultLocalData
+      }
+}
+
+export const saveLocalData = async (localData: LocalData) => {
+    try {
+        localStorage.setItem('localWeatherData', JSON.stringify(localData))
+    } catch (error) {
+        console.error('Error saving local data:', error)
+    }
+}

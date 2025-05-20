@@ -12,28 +12,29 @@ import RightNow from './RightNow.vue';
 import HourlyForecast from './HourlyForecast.vue';
 import FiveDayForecast from './FiveDayForecast.vue';
 import LoadingSpinner from '../LoadingSpinner.vue';
-import type { PinnedCity } from '@/types';
+import type { PinnedCity } from '../PinnedCities.vue';
 
 let cityLocation: CityLocation | { error: string } | null = null
 const weatherData = ref<WeatherData | null>(null)
 const isLoading = ref(false)
 
-const emit = defineEmits(['togglePinned'])
+const emit = defineEmits(['togglePinned', 'lastUpdated'])
 
 const props = defineProps<{
     activeCityName: string
     pinnedCities: Array<PinnedCity>
+    metric: string
 }>()
 
 const isCityPinned = computed(() => {
     return props.pinnedCities.some(city => city.name === props.activeCityName)
 })
 
-async function refreshWeather() {
+const refreshWeather = async () => {
     if (!cityLocation || 'error' in cityLocation) return
     
     isLoading.value = true
-    const apiData = await getWeatherData(cityLocation, 'metric')
+    const apiData = await getWeatherData(cityLocation, props.metric)
     if ('error' in apiData) {
         console.error(apiData.error)
         isLoading.value = false
@@ -41,6 +42,7 @@ async function refreshWeather() {
     }
     weatherData.value = apiData
     isLoading.value = false
+    emit('lastUpdated', new Date().toLocaleString().split(', ')[1])
 }
 
 watch(() => props.activeCityName, async (newCityName) => {
@@ -53,7 +55,7 @@ watch(() => props.activeCityName, async (newCityName) => {
         return
     }
     cityLocation = location
-    const apiData = await getWeatherData(location, 'metric')
+    const apiData = await getWeatherData(location, props.metric)
     if ('error' in apiData) {
         console.error(apiData.error)
         isLoading.value = false
@@ -61,7 +63,12 @@ watch(() => props.activeCityName, async (newCityName) => {
     }
     weatherData.value = apiData
     isLoading.value = false
+    emit('lastUpdated', new Date().toLocaleString().split(', ')[1])
 }, { immediate: true })
+
+watch(() => props.metric, async (_newMetric) => {
+    await refreshWeather()
+})
 </script>
 
 <template>

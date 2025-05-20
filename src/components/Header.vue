@@ -8,7 +8,7 @@ defineProps<{
 </script>
 
 <template>
-    <div class="p-3 text-white text-xl font-bold flex">
+    <header class="p-3 text-white text-xl font-bold flex sticky top-0 bg-sky-600 z-10">
         <h1 class="flex-grow">Simple Weather App</h1>
         <button v-if="!searching" @click="emit('toggleSearch')">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -20,5 +20,5 @@ defineProps<{
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
         </button>
-    </div>
+    </header>
 </template>

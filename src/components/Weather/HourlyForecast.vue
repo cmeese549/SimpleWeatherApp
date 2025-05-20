@@ -10,7 +10,7 @@ const nextDayForecast = computed(() => {
     return props.weatherData.slice(0, 9)
 })
 
-function formatTime(timestamp: number, timezone: number): string {
+const formatTime = (timestamp: number, timezone: number): string => {
     const date = new Date((timestamp + timezone) * 1000)
     const localHour = date.getUTCHours()
     const ampm = localHour >= 12 ? 'pm' : 'am'

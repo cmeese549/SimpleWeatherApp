@@ -3,35 +3,19 @@ import { ref, onMounted } from 'vue'
 
 import Header from './components/Header.vue'
 import Footer from './components/Footer.vue'
-import PinnedCities from './components/PinnedCities.vue'
+import PinnedCities, { type PinnedCity } from './components/PinnedCities.vue'
 import Weather from './components/Weather/Weather.vue'
 import Search from './components/Search.vue'
-
-import type { PinnedCity } from './types'
+import { loadLocalData, saveLocalData, type LocalData } from './data'
 
 const activeCityId = ref(0)
 const activeCityName = ref('Empty')
 let cityId = 0
-const pinnedCities = ref<PinnedCity[]>([
-  {
-    id: cityId++,
-    name: 'Denver'
-  },
-  {
-    id: cityId++,
-    name: 'Rio De Janeiro'
-  },
-  {
-    id: cityId++,
-    name: 'Beijing'
-  },
-  {
-    id: cityId++,
-    name: 'Los Angeles'
-  }
-])
+const pinnedCities = ref<PinnedCity[]>([])
 
 const searching = ref(false)
+const lastUpdated = ref('Never')
+const measurementUnits = ref('metric')
 
 const togglePinned = (cityName: string) => {
   const currentCities = [...pinnedCities.value]
@@ -52,6 +36,10 @@ const togglePinned = (cityName: string) => {
     activeCityId.value = cityId
     activeCityName.value = cityName
   }
+  saveLocalData({
+    pinnedCities: pinnedCities.value.map(city => city.name),
+    metric: measurementUnits.value
+  })
 }
 
 const updateActiveCity = (cityId: number) => {
@@ -63,7 +51,23 @@ const toggleSearch = () => {
   searching.value = !searching.value
 }
 
-onMounted(() => updateActiveCity(0))
+const updateMeasurementUnits = (units: string) => {
+  measurementUnits.value = units
+  saveLocalData({
+    pinnedCities: pinnedCities.value.map(city => city.name),
+    metric: units
+  })
+}
+
+onMounted(async () => {
+  const localData = await loadLocalData()
+  pinnedCities.value = localData.pinnedCities.map(city => ({
+    id: cityId++,
+    name: city
+  }))
+  measurementUnits.value = localData.metric
+  updateActiveCity(0)
+})
 </script>
 
 <template>
@@ -79,11 +83,24 @@ onMounted(() => updateActiveCity(0))
         :activeCityId="activeCityId" 
         @citySelected="updateActiveCity" 
       />
-      <Weather :activeCityName="activeCityName" :pinnedCities="pinnedCities" @togglePinned="togglePinned" />
+      <Weather v-if="pinnedCities.length > 0"
+        :activeCityName="activeCityName" 
+        :pinnedCities="pinnedCities"
+        :metric="measurementUnits"
+        @togglePinned="togglePinned" 
+        @lastUpdated="time => lastUpdated = time"
+       />
+      <div v-else class="flex-grow flex justify-center items-center">
+        <h1 class="text-white text-2xl font-bold mt-20">Please search for a city.</h1>
+      </div>
     </div>
     <div v-else class="flex-grow">
       <Search @citySelected="(cityName) => { activeCityName = cityName; searching = false }" />
     </div>
-    <Footer lastUpdated="2025-05-20" />
+    <Footer 
+      :lastUpdated="lastUpdated" 
+      :measurementUnits="measurementUnits"
+      @unitChange="updateMeasurementUnits" 
+     />
   </div>
 </template>
