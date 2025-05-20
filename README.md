@@ -1,33 +1,21 @@
-# simple-weather
+# Simple Weather App
 
-This template should help get you started developing with Vue 3 in Vite.
+This is a weather app developed using Vue 3 in Vite. You can view a live version of the app here! 
 
-## Recommended IDE Setup
+Pleaes note that the hosting is provided via a free service which may take up to 20 seconds to allocate a server to my app.
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## Features
+- Live Weather Data
+- 24 Hour Forecast
+- 5 Day Forecast
+- Instant City Search
+- Dynamic City Pinning
+- Choice between Metric/Imperial Units
+- Persistant Data with Local Storage
 
-## Type Support for `.vue` Imports in TS
+## Tech
+- Vue
+- Vite
+- TypeScript
+- Tailwind
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Type-Check, Compile and Minify for Production
-
-```sh
-npm run build
-```
