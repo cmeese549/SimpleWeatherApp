@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue';
 
-import { 
+import {
     getCityLocation,
-     type CityLocation, 
-     getWeatherData, 
-     type WeatherData 
+    type CityLocation,
+    getWeatherData,
+    type WeatherData
 } from '../../data'
 
 import RightNow from './RightNow.vue';
@@ -32,7 +32,7 @@ const isCityPinned = computed(() => {
 
 const refreshWeather = async () => {
     if (!cityLocation || 'error' in cityLocation) return
-    
+
     isLoading.value = true
     const apiData = await getWeatherData(cityLocation, props.metric)
     if ('error' in apiData) {
@@ -45,9 +45,10 @@ const refreshWeather = async () => {
     emit('lastUpdated', new Date().toLocaleString().split(', ')[1])
 }
 
+//Refresh weather data whenever the active city name is changed
 watch(() => props.activeCityName, async (newCityName) => {
     isLoading.value = true
-    
+
     const location = await getCityLocation(newCityName)
     if ('error' in location) {
         console.error(location.error)
@@ -66,6 +67,7 @@ watch(() => props.activeCityName, async (newCityName) => {
     emit('lastUpdated', new Date().toLocaleString().split(', ')[1])
 }, { immediate: true })
 
+//Refresh weather data whenever the measurement metric is changed
 watch(() => props.metric, async (_newMetric) => {
     await refreshWeather()
 })
@@ -74,14 +76,10 @@ watch(() => props.metric, async (_newMetric) => {
 <template>
     <div class="relative">
         <div v-if="weatherData !== null && !isLoading" class="flex flex-col">
-            <RightNow 
-                :weatherData="{ name: activeCityName, ...weatherData.current}" 
-                :isPinned="isCityPinned"
-                @togglePinned="emit('togglePinned', activeCityName)"
-                @refresh="refreshWeather"
-            />
-            <HourlyForecast :weatherData="weatherData.forecast"/>
-            <FiveDayForecast :weatherData="weatherData.forecast"/>
+            <RightNow :weatherData="{ name: activeCityName, ...weatherData.current }" :isPinned="isCityPinned"
+                @togglePinned="emit('togglePinned', activeCityName)" @refresh="refreshWeather" />
+            <HourlyForecast :weatherData="weatherData.forecast" />
+            <FiveDayForecast :weatherData="weatherData.forecast" />
         </div>
         <div v-else class="flex justify-center items-center h-full p-7">
             <LoadingSpinner />

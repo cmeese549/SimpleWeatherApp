@@ -24,19 +24,16 @@ const formatTime = (timestamp: number, timezone: number): string => {
         <h5 class="p-2 text-2xl font-bold text-white">Next 24 Hours</h5>
         <div class="font-bold overflow-x-auto scrollbar-hide">
             <div class="flex min-w-max whitespace-nowrap text-white justify-center">
-                <div
-                    v-for="(forecast, idx) in nextDayForecast"
-                    :key="forecast.time"
-                    class="inline-block flex-grow"
+                <div v-for="(forecast, idx) in nextDayForecast" :key="forecast.time" class="inline-block flex-grow"
                     :class="{
                         'pl-1': idx === 0,
                         'pr-1': idx === nextDayForecast.length - 1
-                    }"
-                >
+                    }">
                     <div class="p-3 text-center text-lg flex flex-col items-center">
                         <p>{{ forecast.temp }}°</p>
                         <p class="text-sm text-sky-300">{{ forecast.humidity }}%</p>
-                        <img :src="`https://openweathermap.org/img/wn/${forecast.icon}.png`" :alt="forecast.description" class="w-10 h-10">
+                        <img :src="`https://openweathermap.org/img/wn/${forecast.icon}.png`" :alt="forecast.description"
+                            class="w-10 h-10">
                         <p>{{ formatTime(forecast.time, forecast.timezone) }}</p>
                     </div>
                 </div>

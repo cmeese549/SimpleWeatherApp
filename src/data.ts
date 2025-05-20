@@ -1,5 +1,4 @@
 import * as Papa from 'papaparse'
-import type { PinnedCity } from './components/PinnedCities.vue'
 
 interface CityLocationResponse {
     city_id: number
@@ -60,6 +59,7 @@ const { data } = Papa.parse(fileContent, {
     skipEmptyLines: true
 }) as { data: CityLocationResponse[] }
 
+//Get Latitude/Longitude from name of city
 export const getCityLocation = async (cityName: string): Promise<CityLocation | { error: string }> => {
     try {
         const city = data.find(record => 
@@ -84,6 +84,7 @@ export const getCityLocation = async (cityName: string): Promise<CityLocation | 
     }
 }
 
+//Search CSV file for city with a given name
 export const searchCities = async (query: string): Promise<string[]>  => {
     try {
         const normalizedQuery = query.trim().toLowerCase();
@@ -104,6 +105,7 @@ export const searchCities = async (query: string): Promise<string[]>  => {
     }
 }
 
+//Collect both the current weather data and a 5 day forcast from the API
 export const getWeatherData = async (cityLocation: CityLocation, units: string): Promise<WeatherData | { error: string }> => {
     try {
         const currentWeatherData = await fetch(`https://api.openweathermap.org/data/2.5/weather?units=${units}&lat=${cityLocation.lat}&lon=${cityLocation.lon}&appid=${import.meta.env.VITE_OPENWEATHER_API_KEY}`)
@@ -138,6 +140,7 @@ export const getWeatherData = async (cityLocation: CityLocation, units: string):
     }
 }
 
+//Save/Load data to local storage
 export const loadLocalData = async (): Promise<LocalData> => {
     try {
         const raw = localStorage.getItem('localWeatherData')
