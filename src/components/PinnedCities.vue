@@ -3,21 +3,21 @@ import type { PinnedCity } from '../types'
 
 const emit = defineEmits(['citySelected'])
 
-const props = defineProps<{
+defineProps<{
     cities: Array<PinnedCity>
     activeCityId: number
 }>()
 </script>
 
 <template>
-    <div class="p-1 font-bold bg-white overflow-x-auto scrollbar-hide">
-        <div class="flex whitespace-nowrap">
+    <div class="font-bold bg-white overflow-x-auto scrollbar-hide">
+        <div class="flex gap-2 whitespace-nowrap text-gray-500">
             <div v-for="city in cities" :key="city.id" 
                 class="inline-block" 
-                :class="{ 'bg-blue-100': city.id === activeCityId }"
+                :class="{ 'text-black border-b-3 border-orange-700': city.id === activeCityId }"
                 @click="emit('citySelected', city.id)"
             >
-                <div class="p-2 text-center">
+                <div class="p-3 text-center text-lg">
                     <p>{{ city.name }}</p>
                 </div>
             </div>

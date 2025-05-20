@@ -28,7 +28,11 @@ const pinnedCities: Array<PinnedCity> = [
   <div class="bg-sky-700 min-h-screen flex flex-col">
     <Header city="Rio De Janeiro" />
     <div class="flex-grow">
-      <PinnedCities :cities="pinnedCities" :activeCityId="activeCityId" @citySelected="(cityId) => activeCityId = cityId" />
+      <PinnedCities 
+        :cities="pinnedCities" 
+        :activeCityId="activeCityId" 
+        @citySelected="(cityId) => activeCityId = cityId" 
+      />
     </div>
     <Footer lastUpdated="2025-05-20" />
   </div>
