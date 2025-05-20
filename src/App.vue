@@ -40,6 +40,8 @@ const togglePinned = (cityName: string) => {
     pinnedCities: pinnedCities.value.map(city => city.name),
     metric: measurementUnits.value
   })
+  const newCityIndex = pinnedCities.value.findIndex(city => city.name === cityName)
+  updateActiveCity(pinnedCities.value[newCityIndex].id)
 }
 
 const updateActiveCity = (cityId: number) => {
@@ -83,7 +85,7 @@ onMounted(async () => {
         :activeCityId="activeCityId" 
         @citySelected="updateActiveCity" 
       />
-      <Weather v-if="pinnedCities.length > 0"
+      <Weather v-if="pinnedCities.length > 0 || activeCityName !== 'Empty'"
         :activeCityName="activeCityName" 
         :pinnedCities="pinnedCities"
         :metric="measurementUnits"
