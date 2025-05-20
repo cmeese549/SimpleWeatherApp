@@ -4,7 +4,7 @@ import { ref } from 'vue'
 import Header from './components/Header.vue'
 import Footer from './components/Footer.vue'
 import PinnedCities from './components/PinnedCities.vue'
-import CurrentWeather from './components/CurrentWeather.vue'
+import Weather from './components/Weather.vue'
 import type { PinnedCity } from './types'
 
 const activeCityId = ref(0)
@@ -34,7 +34,7 @@ const pinnedCities: Array<PinnedCity> = [
         :activeCityId="activeCityId" 
         @citySelected="(cityId) => activeCityId = cityId" 
       />
-      <CurrentWeather :activeCityName="pinnedCities[activeCityId].name" />
+      <Weather :activeCityName="pinnedCities[activeCityId].name" />
     </div>
     <Footer lastUpdated="2025-05-20" />
   </div>
