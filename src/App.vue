@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 
 import Header from './components/Header.vue'
 import Footer from './components/Footer.vue'
@@ -8,6 +8,7 @@ import Weather from './components/Weather/Weather.vue'
 import type { PinnedCity } from './types'
 
 const activeCityId = ref(0)
+const activeCityName = ref('Empty')
 let cityId = 0
 const pinnedCities = ref<PinnedCity[]>([
   {
@@ -38,7 +39,6 @@ const togglePinned = (cityName: string) => {
       ...city,
       id: cityId++
     }))
-    activeCityId.value = 0
   } else {
     currentCities.push({
       id: cityId++,
@@ -48,7 +48,12 @@ const togglePinned = (cityName: string) => {
   }
 }
 
-const activeCityName = computed(() => pinnedCities.value[activeCityId.value].name)
+onMounted(() => updateActiveCity(0))
+
+const updateActiveCity = (cityId: number) => {
+  activeCityId.value = cityId
+  activeCityName.value = pinnedCities.value[cityId].name
+}
 </script>
 
 <template>
@@ -58,7 +63,7 @@ const activeCityName = computed(() => pinnedCities.value[activeCityId.value].nam
       <PinnedCities 
         :cities="pinnedCities" 
         :activeCityId="activeCityId" 
-        @citySelected="(cityId) => activeCityId = cityId" 
+        @citySelected="updateActiveCity" 
       />
       <Weather :activeCityName="activeCityName" :pinnedCities="pinnedCities" @togglePinned="togglePinned" />
     </div>
