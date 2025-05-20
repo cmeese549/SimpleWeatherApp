@@ -26,7 +26,7 @@ interface CurrentWeatherData {
 
 export interface HourlyForecastData {
     icon: string
-    time: number  // Unix timestamp
+    time: number 
     temp: number
     description: string
     timezone: number
@@ -38,16 +38,15 @@ export interface WeatherData {
     forecast: HourlyForecastData[]
 }
 
+const response = await fetch('/cities_20000.csv')
+const fileContent = await response.text()
+const { data } = Papa.parse(fileContent, {
+    header: true,
+    skipEmptyLines: true
+}) as { data: CityLocationResponse[] }
+
 export async function getCityLocation(cityName: string): Promise<CityLocation | { error: string }> {
     try {
-        const response = await fetch('/cities_20000.csv')
-        const fileContent = await response.text()
-        
-        const { data } = Papa.parse(fileContent, {
-            header: true,
-            skipEmptyLines: true
-        }) as { data: CityLocationResponse[] }
-
         const city = data.find(record => 
             record.city_name.toLowerCase() === cityName.toLowerCase()
         )
@@ -67,6 +66,26 @@ export async function getCityLocation(cityName: string): Promise<CityLocation | 
         return {
             error: `Error reading city data: ${error instanceof Error ? error.message : 'Unknown error'}`
         }
+    }
+}
+
+export async function searchCities(query: string): Promise<string[]> {
+    try {
+        const normalizedQuery = query.trim().toLowerCase();
+
+        const searchResults = data
+            .filter(record => {
+                const cityName = (record.city_name || '').trim().toLowerCase();
+                return cityName.startsWith(normalizedQuery);
+            })
+            .map(record => `${record.city_name}, ${record.state_code}`)
+            .sort()
+            .slice(0, 100);
+
+        return searchResults;
+    } catch (error) {
+        console.error('Error searching cities:', error);
+        return [];
     }
 }
 

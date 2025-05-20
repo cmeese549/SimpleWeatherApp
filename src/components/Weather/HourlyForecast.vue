@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import type { HourlyForecastData } from '../data'
+import type { HourlyForecastData } from '../../data'
 
 const props = defineProps<{
     weatherData: HourlyForecastData[]
