@@ -10,6 +10,7 @@ import {
 
 import RightNow from './RightNow.vue';
 import HourlyForecast from './HourlyForecast.vue';
+import FiveDayForecast from './FiveDayForecast.vue';
 import LoadingSpinner from './LoadingSpinner.vue';
 
 let cityLocation: CityLocation | { error: string } | null = null
@@ -47,6 +48,7 @@ watch(() => props.activeCityName, async (newCityName) => {
         <div v-if="weatherData !== null && !isLoading" class="flex flex-col">
             <RightNow :weatherData="{ name: activeCityName, ...weatherData.current}"/>
             <HourlyForecast :weatherData="weatherData.forecast"/>
+            <FiveDayForecast :weatherData="weatherData.forecast"/>
         </div>
         <div v-else class="flex justify-center items-center h-full p-7">
             <LoadingSpinner />

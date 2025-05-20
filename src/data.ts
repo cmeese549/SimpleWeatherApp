@@ -30,6 +30,7 @@ export interface HourlyForecastData {
     temp: number
     description: string
     timezone: number
+    humidity: number
 }
 
 export interface WeatherData {
@@ -88,7 +89,8 @@ export async function getWeatherData(cityLocation: CityLocation, units: string):
                 time: forecast.dt,
                 temp: Math.round(forecast.main.temp),
                 description: forecast.weather[0].description.split(' ').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' '),
-                timezone: data.city.timezone
+                timezone: data.city.timezone,
+                humidity: forecast.main.humidity
             }
         })
         return {

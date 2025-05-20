@@ -7,7 +7,7 @@ const props = defineProps<{
 }>()
 
 const nextDayForecast = computed(() => {
-    return props.weatherData.slice(0, 8)
+    return props.weatherData.slice(0, 9)
 })
 
 function formatTime(timestamp: number, timezone: number): string {
@@ -27,16 +27,17 @@ function formatTime(timestamp: number, timezone: number): string {
                 <div
                     v-for="(forecast, idx) in nextDayForecast"
                     :key="forecast.time"
-                    class="inline-block"
+                    class="inline-block flex-grow"
                     :class="{
                         'pl-1': idx === 0,
                         'pr-1': idx === nextDayForecast.length - 1
                     }"
                 >
-                    <div class="p-1 text-center text-lg flex flex-col items-center">
-                        <p>{{ formatTime(forecast.time, forecast.timezone) }}</p>
-                        <img :src="`https://openweathermap.org/img/wn/${forecast.icon}.png`" :alt="forecast.description" class="w-10 h-10">
+                    <div class="p-3 text-center text-lg flex flex-col items-center">
                         <p>{{ forecast.temp }}°</p>
+                        <p class="text-sm text-sky-300">{{ forecast.humidity }}%</p>
+                        <img :src="`https://openweathermap.org/img/wn/${forecast.icon}.png`" :alt="forecast.description" class="w-10 h-10">
+                        <p>{{ formatTime(forecast.time, forecast.timezone) }}</p>
                     </div>
                 </div>
             </div>
