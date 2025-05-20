@@ -1,25 +1,47 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch, computed } from 'vue';
 
 import { 
     getCityLocation,
      type CityLocation, 
      getWeatherData, 
      type WeatherData 
-} from '../data'
+} from '../../data'
 
 import RightNow from './RightNow.vue';
 import HourlyForecast from './HourlyForecast.vue';
 import FiveDayForecast from './FiveDayForecast.vue';
-import LoadingSpinner from './LoadingSpinner.vue';
+import LoadingSpinner from '../LoadingSpinner.vue';
+import type { PinnedCity } from '@/types';
 
 let cityLocation: CityLocation | { error: string } | null = null
 const weatherData = ref<WeatherData | null>(null)
 const isLoading = ref(false)
 
+const emit = defineEmits(['togglePinned'])
+
 const props = defineProps<{
     activeCityName: string
+    pinnedCities: Array<PinnedCity>
 }>()
+
+const isCityPinned = computed(() => {
+    return props.pinnedCities.some(city => city.name === props.activeCityName)
+})
+
+async function refreshWeather() {
+    if (!cityLocation || 'error' in cityLocation) return
+    
+    isLoading.value = true
+    const apiData = await getWeatherData(cityLocation, 'metric')
+    if ('error' in apiData) {
+        console.error(apiData.error)
+        isLoading.value = false
+        return
+    }
+    weatherData.value = apiData
+    isLoading.value = false
+}
 
 watch(() => props.activeCityName, async (newCityName) => {
     isLoading.value = true
@@ -38,15 +60,19 @@ watch(() => props.activeCityName, async (newCityName) => {
         return
     }
     weatherData.value = apiData
-    console.log(apiData)
     isLoading.value = false
 }, { immediate: true })
 </script>
 
 <template>
-    <div>
+    <div class="relative">
         <div v-if="weatherData !== null && !isLoading" class="flex flex-col">
-            <RightNow :weatherData="{ name: activeCityName, ...weatherData.current}"/>
+            <RightNow 
+                :weatherData="{ name: activeCityName, ...weatherData.current}" 
+                :isPinned="isCityPinned"
+                @togglePinned="emit('togglePinned', activeCityName)"
+                @refresh="refreshWeather"
+            />
             <HourlyForecast :weatherData="weatherData.forecast"/>
             <FiveDayForecast :weatherData="weatherData.forecast"/>
         </div>

@@ -4,12 +4,12 @@ import { ref, computed } from 'vue'
 import Header from './components/Header.vue'
 import Footer from './components/Footer.vue'
 import PinnedCities from './components/PinnedCities.vue'
-import Weather from './components/Weather.vue'
+import Weather from './components/Weather/Weather.vue'
 import type { PinnedCity } from './types'
 
 const activeCityId = ref(0)
 let cityId = 0
-const pinnedCities: Array<PinnedCity> = [
+const pinnedCities = ref<PinnedCity[]>([
   {
     id: cityId++,
     name: 'Denver'
@@ -26,9 +26,29 @@ const pinnedCities: Array<PinnedCity> = [
     id: cityId++,
     name: 'Los Angeles'
   }
-]
+])
 
-const activeCityName = computed(() => pinnedCities[activeCityId.value].name)
+const togglePinned = (cityName: string) => {
+  const currentCities = [...pinnedCities.value]
+  const cityIndex = currentCities.findIndex(city => city.name === cityName)
+  if (cityIndex !== -1) {
+    currentCities.splice(cityIndex, 1)
+    cityId = 0
+    pinnedCities.value = currentCities.map(city => ({
+      ...city,
+      id: cityId++
+    }))
+    activeCityId.value = 0
+  } else {
+    currentCities.push({
+      id: cityId++,
+      name: cityName
+    })
+    pinnedCities.value = currentCities
+  }
+}
+
+const activeCityName = computed(() => pinnedCities.value[activeCityId.value].name)
 </script>
 
 <template>
@@ -40,7 +60,7 @@ const activeCityName = computed(() => pinnedCities[activeCityId.value].name)
         :activeCityId="activeCityId" 
         @citySelected="(cityId) => activeCityId = cityId" 
       />
-      <Weather :activeCityName="activeCityName" />
+      <Weather :activeCityName="activeCityName" :pinnedCities="pinnedCities" @togglePinned="togglePinned" />
     </div>
     <Footer lastUpdated="2025-05-20" />
   </div>

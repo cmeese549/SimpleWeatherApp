@@ -97,7 +97,7 @@ function formatDate(date: Date): string {
 
 <template>
     <div class="m-2 block border border-gray-200 rounded-lg bg-sky-600 flex flex-col">
-        <h5 class="p-2 text-2xl font-bold text-white">5-Day Forecast</h5>
+        <h5 class="p-2 text-2xl font-bold text-white">Next 5 Days</h5>
         <div class="font-bold">
             <div class="flex flex-col text-white justify-center">
                 <div
