@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 
 import Header from './components/Header.vue'
 import Footer from './components/Footer.vue'
@@ -10,6 +10,10 @@ import type { PinnedCity } from './types'
 const activeCityId = ref(0)
 let cityId = 0
 const pinnedCities: Array<PinnedCity> = [
+  {
+    id: cityId++,
+    name: 'Denver'
+  },
   {
     id: cityId++,
     name: 'Rio De Janeiro'
@@ -23,18 +27,20 @@ const pinnedCities: Array<PinnedCity> = [
     name: 'Los Angeles'
   }
 ]
+
+const activeCityName = computed(() => pinnedCities[activeCityId.value].name)
 </script>
 
 <template>
   <div class="bg-gradient-to-b from-sky-600 from-10% via-sky-500 via-30% to-amber-200 min-h-screen flex flex-col">
-    <Header :activeCityName="pinnedCities[activeCityId].name" />
+    <Header :activeCityName="activeCityName" />
     <div class="flex-grow">
       <PinnedCities 
         :cities="pinnedCities" 
         :activeCityId="activeCityId" 
         @citySelected="(cityId) => activeCityId = cityId" 
       />
-      <Weather :activeCityName="pinnedCities[activeCityId].name" />
+      <Weather :activeCityName="activeCityName" />
     </div>
     <Footer lastUpdated="2025-05-20" />
   </div>

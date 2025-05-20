@@ -13,9 +13,9 @@ defineProps<{
     <div class="font-bold bg-white overflow-x-auto scrollbar-hide">
         <div class="flex gap-2 whitespace-nowrap text-gray-500">
             <div v-for="city in cities" :key="city.id" 
-                class="inline-block" 
+                class="inline-block cursor-pointer" 
                 :class="{ 'text-black border-b-3 border-orange-700': city.id === activeCityId }"
-                @click="emit('citySelected', city.id)"
+                @click.prevent="emit('citySelected', city.id)"
             >
                 <div class="p-3 text-center text-lg">
                     <p>{{ city.name }}</p>
